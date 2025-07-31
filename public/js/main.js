@@ -31,7 +31,13 @@ i18next.init({
             support: 'Customer Support',
             support_placeholder: 'Leave your complaint...',
             create: 'Create User',
-            assign: 'Assign Broker'
+            assign: 'Assign Broker',
+            register: 'Register',
+            email_or_phone: 'Email or Phone',
+            passport: 'Upload Passport',
+            registration_pending: 'Registration pending admin approval',
+            update_password: 'Update Password',
+            new_password: 'New Password'
         } },
         es: { translation: { 
             welcome: 'Bienvenido a Diver Deposit Bank',
@@ -56,7 +62,13 @@ i18next.init({
             support: 'Soporte al cliente',
             support_placeholder: 'Deja tu queja...',
             create: 'Crear usuario',
-            assign: 'Asignar corredor'
+            assign: 'Asignar corredor',
+            register: 'Registrarse',
+            email_or_phone: 'Correo o teléfono',
+            passport: 'Subir pasaporte',
+            registration_pending: 'Registro pendiente de aprobación administrativa',
+            update_password: 'Actualizar contraseña',
+            new_password: 'Nueva contraseña'
         } },
         ko: { translation: { 
             welcome: 'Diver Deposit Bank에 오신 것을 환영합니다',
@@ -81,7 +93,13 @@ i18next.init({
             support: '고객 지원',
             support_placeholder: '불만 사항을 남겨주세요...',
             create: '사용자 생성',
-            assign: '브로커 지정'
+            assign: '브로커 지정',
+            register: '회원 가입',
+            email_or_phone: '이메일 또는 전화번호',
+            passport: '여권 업로드',
+            registration_pending: '관리자 승인 대기 중인 등록',
+            update_password: '비밀번호 업데이트',
+            new_password: '새 비밀번호'
         } },
         zh: { translation: { 
             welcome: '欢迎体验Diver Deposit Bank',
@@ -106,7 +124,13 @@ i18next.init({
             support: '客户支持',
             support_placeholder: '留下您的投诉...',
             create: '创建用户',
-            assign: '分配经纪人'
+            assign: '分配经纪人',
+            register: '注册',
+            email_or_phone: '电子邮件或电话',
+            passport: '上传护照',
+            registration_pending: '注册等待管理员批准',
+            update_password: '更新密码',
+            new_password: '新密码'
         } }
     }
 }).then(() => {
@@ -122,6 +146,7 @@ function updateUI() {
     document.querySelectorAll('input[data-i18n-placeholder]').forEach(elem => elem.placeholder = i18next.t(elem.dataset.i18nPlaceholder));
 }
 
+// Login Handler
 document.getElementById('login-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = {
@@ -156,6 +181,55 @@ document.getElementById('login-form')?.addEventListener('submit', async (e) => {
     }
 });
 
+// Registration Handler
+document.getElementById('register-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById('register-form'));
+    const data = {
+        username: formData.get('username'),
+        email_or_phone: formData.get('email_or_phone'),
+        password: formData.get('password'),
+        security_code: formData.get('security-code'),
+        favorite_food: formData.get('favorite-food')
+    };
+    const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    alert(result.message || i18next.t('registration_pending'));
+});
+
+// Passport Upload Handler
+document.getElementById('upload-passport-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(document.getElementById('upload-passport-form'));
+    const userId = new URLSearchParams(window.location.search).get('id');
+    formData.append('user_id', userId);
+    const response = await fetch('/api/upload_passport', {
+        method: 'POST',
+        body: formData
+    });
+    const result = await response.json();
+    alert(result.message);
+});
+
+// Password Update Handler
+document.getElementById('update-password-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const userId = new URLSearchParams(window.location.search).get('id');
+    const newPassword = document.getElementById('new-password').value;
+    const response = await fetch('/api/update_password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, new_password: newPassword })
+    });
+    const result = await response.json();
+    alert(result.message);
+});
+
+// Dashboard Loader
 async function loadDashboard(userId) {
     try {
         const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
@@ -192,6 +266,24 @@ async function loadDashboard(userId) {
     }
 }
 
+// Dashboard Dropdown Menu
+document.getElementById('dashboard-menu')?.addEventListener('click', (e) => {
+    document.getElementById('dropdown-content').classList.toggle('show');
+});
+
+window.onclick = (e) => {
+    if (!e.target.matches('.dropbtn')) {
+        const dropdowns = document.getElementsByClassName('dropdown-content');
+        for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+};
+
+// Action Simulators
 async function simulateAction(type) {
     const userId = new URLSearchParams(window.location.search).get('id');
     const response = await fetch('/api/transactions', {
@@ -285,8 +377,26 @@ async function loadUsers() {
     document.getElementById('user-list').innerHTML = users.map(user => `
         <li class="bg-gray-100 p-2 rounded mb-2 flex justify-between">
             ${user.username} - ${user.account_number} - ${user.balance.toFixed(2)} - Funds: ${user.investment_funds.toFixed(2)}
-            <button onclick="updateUser('${user.id}')" class="bg-blue-500 text-white p-1 rounded hover:bg-blue-600">Edit</button>
+            <div>
+                <button onclick="approveUser('${user.id}')" class="bg-green-500 text-white p-1 rounded hover:bg-green-600 mr-1" ${user.status === 'active' ? 'disabled' : ''}>Approve</button>
+                <button onclick="freezeUser('${user.id}')" class="bg-red-500 text-white p-1 rounded hover:bg-red-600" ${user.status === 'frozen' ? 'disabled' : ''}>Freeze</button>
+                <button onclick="updateUser('${user.id}')" class="bg-blue-500 text-white p-1 rounded hover:bg-blue-600">Edit</button>
+            </div>
         </li>`).join('');
+}
+
+async function approveUser(userId) {
+    const response = await fetch(`/api/approve_user/${userId}`, { method: 'POST' });
+    const result = await response.json();
+    alert(result.message);
+    loadUsers();
+}
+
+async function freezeUser(userId) {
+    const response = await fetch(`/api/freeze_user/${userId}`, { method: 'POST' });
+    const result = await response.json();
+    alert(result.message);
+    loadUsers();
 }
 
 async function updateUser(userId) {
@@ -297,7 +407,7 @@ async function updateUser(userId) {
     const securityCode = prompt('Enter new security code (leave blank to skip):');
     const favoriteFood = prompt('Enter new favorite food (leave blank to skip):');
     const updates = { balance, status, investment_funds: investmentFunds };
-    if (password) updates.password = bcrypt.hash(password);
+    if (password) updates.password = bcrypt.hash(password); // Note: bcrypt is server-side; use /api/update_password instead
     if (securityCode) updates.security_code = securityCode;
     if (favoriteFood) updates.favorite_food = favoriteFood;
     const response = await fetch(`/api/admin/users/${userId}`, {
