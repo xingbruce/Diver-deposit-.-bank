@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diver Deposit Bank</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="/js/main.js" defer></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-blue-900 text-white p-4 flex justify-between items-center">
+        <div class="text-xl font-bold">Diver Deposit Bank</div>
+        <div class="flex space-x-4">
+            <button id="dark-mode-toggle" class="p-2 rounded bg-gray-700 hover:bg-gray-600">Toggle Dark Mode</button>
+            <select id="language-select" class="p-2 rounded bg-gray-700 text-white">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="ko">한국어</option>
+                <option value="zh">中文</option>
+            </select>
+        </div>
+    </header>
+    <main class="max-w-4xl mx-auto p-4 space-y-6">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Account Overview</h2>
+            <div id="balance" class="text-2xl font-bold mb-2"></div>
+            <div id="account-number" class="text-sm text-gray-600 mb-2"></div>
+            <div id="card-last4" class="bg-blue-100 p-4 rounded-lg mb-4">Card Last 4: ****</div>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="simulateAction('deposit')" class="bg-green-500 text-white p-2 rounded hover:bg-green-600">Deposit</button>
+                <button onclick="simulateAction('withdraw')" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">Withdraw</button>
+                <button onclick="simulateAction('transfer')" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-600">Transfer</button>
+                <button onclick="downloadStatement()" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Download Statement</button>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Loan Options</h2>
+            <select id="loan-company" class="w-full p-2 border rounded mb-2"></select>
+            <button onclick="simulateLoan()" class="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600">Apply for Loan</button>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Transaction History</h2>
+            <ul id="transaction-list" class="space-y-2"></ul>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Investment Overview</h2>
+            <div id="investment-funds" class="text-lg font-medium mb-2"></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div id="bitcoin-table" class="overflow-x-auto"></div>
+                <div id="stock-table" class="overflow-x-auto"></div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">Customer Support</h2>
+            <input type="text" id="support-message" placeholder="Leave your complaint..." class="w-full p-2 border rounded mb-2">
+            <button onclick="sendChatMessage()" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Send</button>
+            <div id="chat-messages" class="mt-2 h-40 overflow-y-auto border rounded p-2"></div>
+        </div>
+    </main>
+</body>
+</html>
