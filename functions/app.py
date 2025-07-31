@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from supabase import create_client
 import os
 from passlib.hash import bcrypt
+import random
 
 app = Flask(__name__)
 supabase_url = os.environ.get('SUPABASE_URL')
@@ -70,6 +71,89 @@ def get_bitcoin_exchanges():
 def get_stock_exchanges():
     response = supabase.table('stock_exchanges').select('*').execute()
     return jsonify(response.data)
+
+# New Registration Endpoint
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    email_or_phone = data.get('email_or_phone')
+    password = data.get('password')
+    security_code = data.get('security_code')
+    favorite_food = data.get('favorite_food')
+    account_number = f"ACCT{''.join([str(random.randint(0, 9)) for _ in range(10)])}"
+
+    existing = supabase.table('users').select('id').eq('username', username).execute()
+    if existing.data:
+        return jsonify({'error': 'Username already taken'}), 400
+
+    new_user = {
+        'username': username,
+        'password': bcrypt.hash(password),
+        'security_code': security_code,
+        'favorite_food': favorite_food,
+        'account_number': account_number,
+        'balance': 0.00,
+        'investment_funds': 0.00,
+        'role': 'user',
+        'status': 'pending',
+        'email_or_phone': email_or_phone
+    }
+    response = supabase.table('users').insert(new_user).execute()
+    return jsonify({'message': 'Registration pending admin approval', 'id': response.data[0]['id']}), 201
+
+# New Passport Upload Endpoint
+@app.route('/api/upload_passport', methods=['POST'])
+def upload_passport():
+    if 'passport' not in request.files:
+        return jsonify({'error': 'No passport image uploaded'}), 400
+    file = request.files['passport']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    # Placeholder: Store file path (integrate Supabase Storage for real use)
+    passport_url = f"passports/{file.filename}"
+    user_id = request.form.get('user_id')
+    supabase.table('users').update({'passport_image': passport_url}).eq('id', user_id).execute()
+    return jsonify({'message': 'Passport uploaded', 'url': passport_url}), 200
+
+# New Admin Approval Endpoint
+@app.route('/api/approve_user/<int:user_id>', methods=['POST'])
+def approve_user(user_id):
+    supabase.table('users').update({'status': 'active'}).eq('id', user_id).execute()
+    return jsonify({'message': 'User approved'}), 200
+
+# New Admin Freeze Endpoint
+@app.route('/api/freeze_user/<int:user_id>', methods=['POST'])
+def freeze_user(user_id):
+    supabase.table('users').update({'status': 'frozen'}).eq('id', user_id).execute()
+    return jsonify({'message': 'User frozen'}), 200
+
+# New Admin Add Profile Endpoint
+@app.route('/api/add_profile', methods=['POST'])
+def add_profile():
+    data = request.get_json()
+    new_profile = {
+        'username': data.get('username'),
+        'password': bcrypt.hash(data.get('password')),
+        'security_code': data.get('security_code'),
+        'favorite_food': data.get('favorite_food'),
+        'account_number': f"ACCT{''.join([str(random.randint(0, 9)) for _ in range(10)])}",
+        'balance': 0.00,
+        'investment_funds': 0.00,
+        'role': 'user',
+        'status': 'active'
+    }
+    response = supabase.table('users').insert(new_profile).execute()
+    return jsonify({'message': 'Profile added', 'id': response.data[0]['id']}), 201
+
+# New Password Update Endpoint
+@app.route('/api/update_password', methods=['POST'])
+def update_password():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    new_password = data.get('new_password')
+    supabase.table('users').update({'password': bcrypt.hash(new_password)}).eq('id', user_id).execute()
+    return jsonify({'message': 'Password updated'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
