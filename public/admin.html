@@ -6,6 +6,7 @@
     <title>Diver Deposit Bank Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="/js/main.js" defer></script>
 </head>
@@ -13,8 +14,8 @@
     <header class="bg-blue-900 text-white p-4 flex justify-between items-center">
         <div class="text-xl font-bold">Diver Deposit Bank Admin</div>
         <div class="flex space-x-4">
-            <button id="dark-mode-toggle" class="p-2 rounded bg-gray-700 hover:bg-gray-600">Toggle Dark Mode</button>
-            <select id="language-select" class="p-2 rounded bg-gray-700 text-white">
+            <button id="dark-mode-toggle" class="p-2 rounded bg-gray-700 hover:bg-gray-600" data-i18n="dark_mode_toggle">Toggle Dark Mode</button>
+            <select id="language-select" class="p-2 rounded bg-gray-700 text-white" data-i18n-select>
                 <option value="en">English</option>
                 <option value="es">Español</option>
                 <option value="ko">한국어</option>
@@ -24,25 +25,26 @@
     </header>
     <main class="max-w-4xl mx-auto p-4 space-y-6">
         <div class="bg-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Create User</h2>
+            <h2 class="text-xl font-semibold mb-4" data-i18n="welcome">Welcome to Admin Dashboard</h2>
             <form id="create-user-form" class="space-y-4">
-                <input type="text" id="new-username" placeholder="Username" class="w-full p-2 border rounded" required>
-                <input type="password" id="new-password" placeholder="Password" class="w-full p-2 border rounded" required>
-                <input type="text" id="new-security-code" placeholder="Security Code" class="w-full p-2 border rounded" required>
-                <input type="text" id="new-favorite-food" placeholder="Favorite Food" class="w-full p-2 border rounded" required>
-                <input type="number" id="new-balance" placeholder="Balance" class="w-full p-2 border rounded" required>
-                <input type="number" id="new-investment-funds" placeholder="Investment Funds" class="w-full p-2 border rounded" required>
-                <button type="submit" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Create User</button>
+                <input type="text" id="new-username" placeholder="Username" class="w-full p-2 border rounded" required data-i18n-placeholder="username">
+                <input type="password" id="new-password" placeholder="Password" class="w-full p-2 border rounded" required data-i18n-placeholder="password">
+                <input type="text" id="new-security-code" placeholder="Security Code" class="w-full p-2 border rounded" required data-i18n-placeholder="security_code">
+                <input type="text" id="new-favorite-food" placeholder="Favorite Food" class="w-full p-2 border rounded" required data-i18n-placeholder="favorite_food">
+                <input type="number" id="new-balance" placeholder="Balance" class="w-full p-2 border rounded" required step="0.01">
+                <input type="number" id="new-investment-funds" placeholder="Investment Funds" class="w-full p-2 border rounded" required step="0.01">
+                <button type="submit" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600" data-i18n="create">Create User</button>
             </form>
-            <ul id="user-list" class="mt-4 space-y-2"></ul>
+            <h3 class="text-lg font-semibold mt-6 mb-2" data-i18n="history">User List</h3>
+            <ul id="user-list" class="mt-2 space-y-2"></ul>
         </div>
         <div class="bg-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Manage Brokers</h2>
+            <h2 class="text-xl font-semibold mb-4" data-i18n="broker">Manage Brokers</h2>
             <form id="assign-broker-form" class="space-y-4">
                 <input type="text" id="broker-user-id" placeholder="User ID" class="w-full p-2 border rounded" required>
                 <input type="text" id="broker-name" placeholder="Broker Name" class="w-full p-2 border rounded" required>
-                <input type="number" id="broker-balance" placeholder="Balance" class="w-full p-2 border rounded" required>
-                <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Assign Broker</button>
+                <input type="number" id="broker-balance" placeholder="Balance" class="w-full p-2 border rounded" required step="0.01">
+                <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600" data-i18n="assign">Assign Broker</button>
             </form>
         </div>
     </main>
