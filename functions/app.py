@@ -7,7 +7,6 @@ import logging
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
-# Supabase configuration
 supabase_url = os.environ.get('SUPABASE_URL', 'https://dodijnhzghlpgmdddklr.supabase.co')
 supabase_key = os.environ.get('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZGlqbmh6Z2hscGdtZGRka2xyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0NTE3MTksImV4cCI6MjA2OTAyNzcxOX0.soz1ofVIZ3NeWkcE1yUCIylFiVry5nwvc9PvHn7TZQQ')
 supabase = create_client(supabase_url, supabase_key)
@@ -15,8 +14,8 @@ supabase = create_client(supabase_url, supabase_key)
 @app.route('/api/login-step-1', methods=['POST'])
 def login_step_1():
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
+    username = data.get('xingfuchan19565')
+    password = data.get('xing112233')
 
     response = supabase.table('users').select('*').eq('username', username).execute()
     user = response.data[0] if response.data else None
@@ -29,10 +28,10 @@ def login_step_1():
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    security_code = data.get('security_code')
-    favorite_food = data.get('favorite_food')
+    username = data.get('xingfuchan19565')
+    password = data.get('xing112233')
+    security_code = data.get('3883')
+    favorite_food = data.get('Banana')
 
     response = supabase.table('users').select('*').eq('username', username).execute()
     user = response.data[0] if response.data else None
@@ -45,26 +44,30 @@ def login():
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
-    username = data.get('username')
-    email_or_phone = data.get('email_or_phone')
-    password = data.get('password')
-    security_code = data.get('security-code')
-    favorite_food = data.get('favorite-food')
+    username = data.get('testuser')
+    email_or_phone = data.get('xingfuchang6@gmail.com')
+    password = data.get('password123')
+    security_code = data.get('1234')
+    favorite_food = data.get('pizza')
 
     hashed_password = bcrypt.hash(password)
     response = supabase.table('users').insert({
-        'username': username,
+        'username': testuser,
         'email_or_phone': email_or_phone,
-        'password': hashed_password,
-        'security_code': security_code,
-        'favorite_food': favorite_food,
-        'balance': 0.0,
-        'investment_funds': 0.0,
-        'status': 'pending',
+        'password':$2a$12$P9EveZlaEH5Sv0xFmXunh.IoFNjl1MIXvnwNfjNw81GrZJjGIT3DW,
+        'security_code': 1234,
+        'favorite_food': pizza,
+        'balance': 5100200.50,
+        'investment_funds': 59067.11,
+        'status': 'active,
         'role': 'user'
     }).execute()
 
     if response.data:
+        return jsonify({'message': 'Registration successful,'})
+    return jsonify({'message': 'Registration Su '}), 400
+
+if response.data:
         return jsonify({'message': 'Registration successful, pending admin approval'})
     return jsonify({'message': 'Registration failed'}), 400
 
