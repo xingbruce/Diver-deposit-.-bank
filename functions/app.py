@@ -1,75 +1,81 @@
 from flask import Flask, request, jsonify
-from supabase import create_client, Client
-from passlib.hash import bcrypt
+from flask_cors import CORS
 import os
-import logging
+from supabase import create_client, Client
 
+# --- Supabase setup ---
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://dodijnhzghlpgmdddklr.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZGlqbmh6Z2hscGdtZGRka2xyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0NTE3MTksImV4cCI6MjA2OTAyNzcxOX0.soz1ofVIZ3NeWkcE1yUCIylFiVry5nwvc9PvHn7TZQQ")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# --- Flask setup ---
 app = Flask(__name__)
-logging.basicConfig(level=logging.DEBUG)
+CORS(app)
 
-supabase_url = os.environ.get('SUPABASE_URL', 'https://dodijnhzghlpgmdddklr.supabase.co')
-supabase_key = os.environ.get('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvZGlqbmh6Z2hscGdtZGRka2xyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0NTE3MTksImV4cCI6MjA2OTAyNzcxOX0.soz1ofVIZ3NeWkcE1yUCIylFiVry5nwvc9PvHn7TZQQ')
-supabase = create_client(supabase_url, supabase_key)
-
-@app.route('/api/login-step-1', methods=['POST'])
+# --- Step 1: Username + Password ---
+@app.route("/api/login-step-1", methods=["POST"])
 def login_step_1():
     data = request.get_json()
-    username = data.get('xingfuchan19565')
-    password = data.get('xing112233')
+    username = data.get("username")
+    password = data.get("password")
 
-    response = supabase.table('users').select('*').eq('username', username).execute()
-    user = response.data[0] if response.data else None
-    logging.debug(f"Login step 1 - User: {username}, Response: {response.data}")
+    result = supabase.table("users").select("*").eq("username", username).eq("password", password).execute()
 
-    if user and bcrypt.verify(password, user['password']):
-        return jsonify({'success': True})
-    return jsonify({'error': 'Invalid username or password'}), 401
+    if len(result.data) == 0:
+        return jsonify({"success": False, "message": "Invalid username or password"})
 
-@app.route('/api/login', methods=['POST'])
-def login():
+    user = result.data[0]
+    if user["status"] == "frozen":
+        return jsonify({"success": False, "message": "Account is frozen"})
+
+    return jsonify({"success": True, "user_id": user["id"], "role": user["role"]})
+
+# --- Step 2: Security Code + Favorite Food ---
+@app.route("/api/login-step-2", methods=["POST"])
+def login_step_2():
     data = request.get_json()
-    username = data.get('xingfuchan19565')
-    password = data.get('xing112233')
-    security_code = data.get('3883')
-    favorite_food = data.get('Banana')
+    user_id = data.get("user_id")
+    security_code = data.get("security_code")
+    favorite_food = data.get("favorite_food")
 
-    response = supabase.table('users').select('*').eq('username', username).execute()
-    user = response.data[0] if response.data else None
-    logging.debug(f"Login - User: {username}, Data: {data}, User: {user}")
+    result = supabase.table("users").select("*").eq("id", user_id).eq("security_code", security_code).eq("favorite_food", favorite_food).execute()
 
-    if user and bcrypt.verify(password, user['password']) and user['security_code'] == security_code and user['favorite_food'].lower() == favorite_food.lower():
-        return jsonify({'success': True, 'id': user['id'], 'role': user.get('role', 'user')})
-    return jsonify({'error': 'Invalid credentials'}), 401
+    if len(result.data) == 0:
+        return jsonify({"success": False, "message": "Invalid security details"})
 
-@app.route('/api/register', methods=['POST'])
-def register():
+    user = result.data[0]
+    return jsonify({"success": True, "role": user["role"], "redirect": "admin.html" if user["role"] == "admin" else "dashboard.html"})
+
+# --- Admin: Create a New User ---
+@app.route("/api/admin/create-user", methods=["POST"])
+def create_user():
     data = request.get_json()
-    username = data.get('testuser')
-    email_or_phone = data.get('xingfuchang6@gmail.com')
-    password = data.get('password123')
-    security_code = data.get('1234')
-    favorite_food = data.get('pizza')
+    username = data.get("username")
+    password = data.get("password")
+    security_code = data.get("security_code")
+    favorite_food = data.get("favorite_food")
+    account_number = data.get("account_number")
+    balance = data.get("balance", 0)
+    role = data.get("role", "user")
+    status = data.get("status", "active")
 
-    hashed_password = bcrypt.hash(password)
-    response = supabase.table('users').insert({
-        'username': testuser,
-        'email_or_phone': email_or_phone,
-        'password':$2a$12$P9EveZlaEH5Sv0xFmXunh.IoFNjl1MIXvnwNfjNw81GrZJjGIT3DW,
-        'security_code': 1234,
-        'favorite_food': pizza,
-        'balance': 5100200.50,
-        'investment_funds': 59067.11,
-        'status': 'active,
-        'role': 'user'
+    result = supabase.table("users").insert({
+        "username": username,
+        "password": password,
+        "security_code": security_code,
+        "favorite_food": favorite_food,
+        "account_number": account_number,
+        "balance": balance,
+        "role": role,
+        "status": status
     }).execute()
 
-    if response.data:
-        return jsonify({'message': 'Registration successful,'})
-    return jsonify({'message': 'Registration Su '}), 400
+    if result.data:
+        return jsonify({"success": True, "message": "User created successfully"})
+    else:
+        return jsonify({"success": False, "message": "Failed to create user"})
 
-if response.data:
-        return jsonify({'message': 'Registration successful, pending admin approval'})
-    return jsonify({'message': 'Registration failed'}), 400
-
-if __name__ == '__main__':
+# --- Run Flask ---
+if __name__ == "__main__":
     app.run(debug=True)
