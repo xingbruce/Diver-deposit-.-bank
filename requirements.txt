@@ -1,3 +1,4 @@
-flask
-supabase
-passlib
+Flask==2.3.2
+flask-cors==3.0.10
+passlib==1.7.4
+supabase==1.0.0
