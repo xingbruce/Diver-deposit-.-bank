@@ -1,51 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diver Deposit Bank</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="/js/main.js" defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Diver Deposit Bank</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <script src="/js/main.js" defer></script>
 </head>
 <body class="bg-gradient-to-br from-blue-800 to-gray-900 min-h-screen flex items-center justify-center relative overflow-hidden">
-    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full relative z-10 animate__animated animate__fadeIn">
-        <div class="flex justify-center mb-6">
-            <div class="text-3xl font-bold text-blue-900" data-i18n="welcome">Diver Deposit Bank</div>
+
+  <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full relative z-10 animate__animated animate__fadeIn">
+
+    <div class="flex justify-center mb-6">
+      <div class="text-3xl font-bold text-blue-900">Diver Deposit Bank</div>
+    </div>
+    <p class="text-gray-600 text-center mb-6 text-sm">Since 1988</p>
+
+    <!-- STEP 1 -->
+    <div id="step1-container">
+      <form id="login-step-1" class="space-y-4">
+        <div class="relative">
+          <input type="text" id="username" placeholder="Username" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <span class="absolute right-3 top-3 text-gray-400">👤</span>
         </div>
-        <p class="text-gray-600 text-center mb-6 text-sm" data-i18n="since">Since 1988</p>
-        <form id="login-form" class="space-y-4">
-            <div class="relative">
-                <input type="text" id="username" placeholder="Username" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required data-i18n-placeholder="username">
-                <span class="absolute right-3 top-3 text-gray-400">👤</span>
-            </div>
-            <div class="relative">
-                <input type="password" id="password" placeholder="Password" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required data-i18n-placeholder="password">
-                <span class="absolute right-3 top-3 text-gray-400">🔒</span>
-            </div>
-            <div class="relative">
-                <input type="text" id="security-code" placeholder="Security Code" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required data-i18n-placeholder="security_code">
-                <span class="absolute right-3 top-3 text-gray-400">🔑</span>
-            </div>
-            <div class="relative">
-                <input type="text" id="favorite-food" placeholder="Favorite Food" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required data-i18n-placeholder="favorite_food">
-                <span class="absolute right-3 top-3 text-gray-400">🍕</span>
-            </div>
-            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-200 animate__animated animate__pulse" data-i18n="login">Login</button>
-            <div class="text-center">
-                <a href="#" id="forgot-password" class="text-blue-500 text-sm" data-i18n="forgotten_password">Forgotten your? Reset your password</a>
-            </div>
-            <button id="register-button" class="w-full bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 mt-2" data-i18n="register">Register</button>
-            <div id="loading" class="hidden flex justify-center"><div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div></div>
-            <div id="success" class="hidden text-green-500 text-center">✅</div>
-            <div id="error" class="hidden text-red-500 text-center">❎ Invalid credentials</div>
+        <div class="relative">
+          <input type="password" id="password" placeholder="Password" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <span class="absolute right-3 top-3 text-gray-400">🔒</span>
         </div>
-        <div class="wave-bg absolute bottom-0 w-full h-20 bg-gradient-to-t from-blue-900 to-transparent"></div>
-        <div class="absolute top-4 left-4 text-white text-lg font-semibold animated-text" style="animation-delay: 0s;" data-i18n="commitment">We’re committed to our goal</div>
-        <div class="absolute top-16 left-4 text-white text-lg font-semibold animated-text" style="animation-delay: 4s;" data-i18n="support_msg">Diver got you covered with our 24/7 Customer service</div>
-        <div class="absolute top-28 left-4 text-white text-lg font-semibold animated-text" style="animation-delay: 8s;" data-i18n="investment">Investment opportunity</div>
-        <div class="absolute top-40 left-4 text-white text-lg font-semibold animated-text" style="animation-delay: 12s;" data-i18n="services">Advanced banking services</div>
-    </body>
+        <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-200">Next</button>
+        <div class="text-center">
+          <a href="#" id="forgot-password" class="text-blue-500 text-sm">Forgotten your? Reset your password</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- STEP 2 (hidden initially) -->
+    <div id="step2-container" class="hidden">
+      <form id="login-step-2" class="space-y-4">
+        <div class="relative">
+          <input type="text" id="security-code" placeholder="Security Code" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <span class="absolute right-3 top-3 text-gray-400">🔑</span>
+        </div>
+        <div class="relative">
+          <input type="text" id="favorite-food" placeholder="Favorite Food" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <span class="absolute right-3 top-3 text-gray-400">🍕</span>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-200">Login</button>
+        <div class="text-center mt-2">
+          <button id="back-to-step1" class="text-gray-600 text-sm">Back</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="loading" class="hidden flex justify-center mt-4"><div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-600"></div></div>
+    <div id="success" class="hidden text-green-500 text-center mt-3">✅ Success</div>
+    <div id="error" class="hidden text-red-500 text-center mt-3">❎ Invalid credentials</div>
+
+  </div>
+
+  <script>
+    // small helper (keeps layout in sync if/js not ready)
+    document.getElementById('back-to-step1')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('step2-container').classList.add('hidden');
+      document.getElementById('step1-container').classList.remove('hidden');
+    });
+  </script>
+</body>
 </html>
